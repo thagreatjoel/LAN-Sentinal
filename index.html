@@ -1,19 +1,53 @@
 <!DOCTYPE html>
-<<head>
-  <<title>LAN SNIPER</title>
+<html>
+<head>
+  <title>LAN SNIPER</title>
 </head>
+
 <body>
   <h2>LAN</h2>
   <button onclick="scan()">Scan</button>
+
+  <p id="status">Status: idle</p>
+
+  <table border="1">
+    <tr>
+      <th>IP</th>
+      <th>MAC</th>
+      <th>VENDOR</th>
+    </tr>
+    <tbody id="list"></tbody>
+  </table>
+
+<script>
+function scan() {
+  document.getElementById("status").innerText = "Scanning...";
+
+  fetch("/scan")
+    .then(res => res.json())
+    .then(devices => {
+      const list = document.getElementById("list");
+      list.innerHTML = "";
+
+      devices.forEach(d => {
+        const row = document.createElement("tr");
+
+        row.innerHTML =
+          "<td>" + d.ip + "</td>" +
+          "<td>" + d.mac + "</td>" +
+          "<td>" + d.vendor + "</td>";
+
+        list.appendChild(row);
+      });
+
+      document.getElementById("status").innerText = "Done";
+    })
+    .catch(() => {
+      alert("Scan Failed");
+      document.getElementById("status").innerText = "Error";
+    });
+}
+</script>
+
 </body>
-
-<p id="status">Status: idle</p>
-
-<table border="1">
- <tr>
-   <th>IP</th>
-   <th>MAC</th>
-   <th>VENDOR</th>
- </tr> 
- <tbody id="list"></tbody>
-</table>
+</html>
